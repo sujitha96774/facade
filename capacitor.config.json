@@ -1,0 +1,6 @@
+{
+  "appId": "com.autodesk.facade360",
+  "appName": "Urban Facade 360",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

@@ -15,33 +15,33 @@ export default function StructureView() {
   const [activeTab, setActiveTab] = useState('2d-drawings'); // 2d-drawings, specs
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-3.5 sm:p-5 md:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-orange-400">
-            <Hammer className="w-4 h-4 text-orange-400" />
+          <div className="flex items-center gap-2 text-xs font-mono text-orange-600">
+            <Hammer className="w-4 h-4 text-orange-500" />
             <span>REVIT STRUCTURAL DETAILING (B+G+9)</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
-            Structural Modeling & <span className="text-orange-400">Rebar Detailing</span>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 mt-0.5">
+            Structural Modeling & <span className="text-orange-600">Rebar Detailing</span>
           </h1>
-          <p className="text-slate-500 text-xs mt-1">
+          <p className="text-slate-500 text-xs mt-1 max-w-2xl leading-relaxed">
             2D vector structural drawings, beam-column node cross-sections, M40 concrete specs, and Fe500D rebar schedules.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-slate-100 p-1 sm:p-1.5 rounded-xl border border-slate-200 self-start md:self-auto">
           <button
             onClick={() => setActiveTab('2d-drawings')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${activeTab === '2d-drawings' ? 'bg-orange-600 text-white' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${activeTab === '2d-drawings' ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
           >
             2D Rebar Drawings
           </button>
           <button
             onClick={() => setActiveTab('specs')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${activeTab === 'specs' ? 'bg-orange-600 text-white' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${activeTab === 'specs' ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
           >
             BIM Material Specs
           </button>
@@ -50,22 +50,22 @@ export default function StructureView() {
 
       {/* 2D STRUCTURAL DRAWINGS TAB */}
       {activeTab === '2d-drawings' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           
           {/* Drawing 1: Beam-Column Joint Cross Section */}
-          <div className="glass-panel p-6 rounded-2xl border border-slate-200 space-y-4">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-200 space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
-                <span className="font-mono text-[10px] text-orange-400 font-bold px-2 py-0.5 rounded bg-orange-50 border border-orange-200">
+                <span className="font-mono text-[10px] text-orange-600 font-bold px-2 py-0.5 rounded bg-orange-50 border border-orange-200">
                   DRAWING ST-01
                 </span>
-                <h3 className="font-bold text-slate-900 text-base mt-1">Primary Transfer Beam-Column Node</h3>
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">Primary Transfer Beam-Column Node</h3>
               </div>
               <span className="text-xs font-mono text-slate-500">Grid C-12</span>
             </div>
 
             {/* Vector SVG Beam-Column Detail */}
-            <div className="bg-slate-100 rounded-2xl border border-slate-200 p-6 flex flex-col items-center justify-center min-h-[280px]">
+            <div className="bg-slate-100 rounded-2xl border border-slate-200 p-3 sm:p-6 flex flex-col items-center justify-center min-h-[220px] sm:min-h-[280px]">
               <svg viewBox="0 0 400 240" className="w-full max-w-md">
                 {/* Column outer shape */}
                 <rect x="160" y="20" width="80" height="200" fill="#e2e8f0" stroke="#f97316" strokeWidth="2" />

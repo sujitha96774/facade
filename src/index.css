@@ -1,11 +1,44 @@
 @import "tailwindcss";
 
 @layer base {
+  *, ::before, ::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
   body {
     background-color: #ffffff;
     color: #1e293b;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    min-height: 100%;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    width: 100%;
   }
+}
+
+/* Touch-friendly horizontal scrollbar hiding */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area insets for mobile notches and bottom bars */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* Glassmorphism styling - Light theme */

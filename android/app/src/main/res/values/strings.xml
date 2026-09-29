@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">facade</string>
+    <string name="title_activity_main">facade</string>
+    <string name="package_name">com.srihariharan.facade</string>
+    <string name="custom_url_scheme">com.srihariharan.facade</string>
+</resources>

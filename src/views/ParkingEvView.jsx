@@ -48,114 +48,114 @@ export default function ParkingEvView() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-3.5 sm:p-5 md:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
-            <Car className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-xs font-mono text-emerald-600">
+            <Car className="w-4 h-4 text-emerald-500" />
             <span>BASEMENT PARKING LEVEL (-1)</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
-            Parking & EV Charging <span className="text-emerald-400">Dashboard</span>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 mt-0.5">
+            Parking & EV Charging <span className="text-emerald-600">Dashboard</span>
           </h1>
-          <p className="text-slate-500 text-xs mt-1">
+          <p className="text-slate-500 text-xs mt-1 max-w-2xl leading-relaxed">
             Real-time management of 200 parking stalls, 40 DC fast EV chargers (150kW), and load balancing grid.
           </p>
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-slate-100 p-1 sm:p-1.5 rounded-xl border border-slate-200 self-start md:self-auto">
           <button
             onClick={() => setFilterType('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${filterType === 'ALL' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${filterType === 'ALL' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
           >
-            All 200 Slots
+            All 200
           </button>
           <button
             onClick={() => setFilterType('EV_ONLY')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${filterType === 'EV_ONLY' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${filterType === 'EV_ONLY' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
           >
             40 EV Stalls
           </button>
           <button
             onClick={() => setFilterType('AVAILABLE')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${filterType === 'AVAILABLE' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${filterType === 'AVAILABLE' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
           >
-            Available Now ({availableSlots})
+            Free ({availableSlots})
           </button>
         </div>
       </div>
 
-      {/* Top Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Top Metric Cards - 2 cols on mobile, 4 on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         
-        <div className="glass-panel p-5 rounded-2xl border border-slate-200 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>Total Parking Stalls</span>
-            <Car className="w-4 h-4 text-slate-500" />
+        <div className="glass-panel p-3.5 sm:p-5 rounded-2xl border border-slate-200 space-y-1 sm:space-y-2">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+            <span>Total Stalls</span>
+            <Car className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
           </div>
-          <div className="text-3xl font-extrabold text-slate-900">200 Stalls</div>
-          <p className="text-[11px] text-emerald-400 font-semibold">{availableSlots} Stalls Currently Free</p>
+          <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900">200 Stalls</div>
+          <p className="text-[10px] sm:text-[11px] text-emerald-600 font-semibold">{availableSlots} Stalls Free</p>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-200 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>DC Fast EV Chargers</span>
-            <Zap className="w-4 h-4 text-emerald-400" />
+        <div className="glass-panel p-3.5 sm:p-5 rounded-2xl border border-slate-200 space-y-1 sm:space-y-2">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+            <span>EV Fast Chargers</span>
+            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500" />
           </div>
-          <div className="text-3xl font-extrabold text-emerald-400">{totalEv} Chargers</div>
-          <p className="text-[11px] text-emerald-400 font-semibold">{chargingNow} Vehicles Actively Fast Charging</p>
+          <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-emerald-600">{totalEv} Chargers</div>
+          <p className="text-[10px] sm:text-[11px] text-emerald-600 font-semibold">{chargingNow} Active Chargers</p>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-200 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>Total EV Power Load</span>
-            <Power className="w-4 h-4 text-yellow-400" />
+        <div className="glass-panel p-3.5 sm:p-5 rounded-2xl border border-slate-200 space-y-1 sm:space-y-2">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+            <span>Total EV Load</span>
+            <Power className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-500" />
           </div>
-          <div className="text-3xl font-extrabold text-yellow-400">{totalKwDrawn} kW</div>
-          <p className="text-[11px] text-slate-500">Off-grid Solar PV Offset: 42%</p>
+          <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-yellow-500">{totalKwDrawn} kW</div>
+          <p className="text-[10px] sm:text-[11px] text-slate-500">Solar Offset: 42%</p>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-200 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>Basement Air Quality</span>
-            <ShieldCheck className="w-4 h-4 text-teal-400" />
+        <div className="glass-panel p-3.5 sm:p-5 rounded-2xl border border-slate-200 space-y-1 sm:space-y-2">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+            <span>Air Quality</span>
+            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-500" />
           </div>
-          <div className="text-3xl font-extrabold text-teal-400">AQI 24 (Good)</div>
-          <p className="text-[11px] text-slate-500">CO Sensors Auto-Ventilated</p>
+          <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-teal-600">AQI 24 (Good)</div>
+          <p className="text-[10px] sm:text-[11px] text-slate-500">CO Sensors Online</p>
         </div>
 
       </div>
 
       {/* 2D Basement Parking Grid */}
-      <div className="glass-panel p-6 rounded-2xl border border-slate-200 space-y-4">
+      <div className="glass-panel p-3.5 sm:p-6 rounded-2xl border border-slate-200 space-y-3 sm:space-y-4">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
-          <h2 className="font-bold text-slate-900 text-base flex items-center gap-2">
-            <Car className="w-5 h-5 text-emerald-400" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b border-slate-200 pb-3">
+          <h2 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+            <Car className="w-4.5 h-4.5 text-emerald-500 shrink-0" />
             <span>Basement -1 Parking Grid Map (200 Slots)</span>
           </h2>
 
-          <div className="flex items-center gap-4 text-xs font-mono">
+          <div className="flex items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-mono">
             <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded bg-emerald-600" />
-              <span className="text-slate-600">EV Charging (40)</span>
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded bg-emerald-600 shrink-0" />
+              <span className="text-slate-600">EV (40)</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded bg-blue-600" />
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded bg-blue-600 shrink-0" />
               <span className="text-slate-600">Occupied</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded bg-white border border-slate-300" />
-              <span className="text-slate-600">Available</span>
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded bg-white border border-slate-300 shrink-0" />
+              <span className="text-slate-600">Free</span>
             </div>
           </div>
         </div>
 
-        {/* Grid display */}
-        <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2 max-h-[460px] overflow-y-auto p-1">
+        {/* Grid display: 4 cols on mobile, up to 12 on large */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-1.5 sm:gap-2 max-h-[460px] overflow-y-auto p-1">
           {filteredSlots.map(slot => {
             const isCharging = slot.status === 'Charging';
             const isOccupied = slot.status === 'Occupied';
@@ -169,15 +169,18 @@ export default function ParkingEvView() {
               <button
                 key={slot.slotId}
                 onClick={() => setSelectedSlot(slot)}
-                className={`p-2 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${bgColor}`}
+                className={`p-1.5 sm:p-2 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-0.5 sm:space-y-1 ${bgColor}`}
               >
-                <span className="font-mono text-[10px] font-bold block">{slot.slotId}</span>
+                <span className="font-mono text-[9px] sm:text-[10px] font-bold block truncate w-full">{slot.slotId}</span>
                 {slot.isEv ? (
-                  <Zap className={`w-3.5 h-3.5 ${isCharging ? 'text-emerald-400 animate-pulse' : 'text-amber-400'}`} />
+                  <Zap className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isCharging ? 'text-emerald-500 animate-pulse' : 'text-amber-500'}`} />
                 ) : (
-                  <Car className="w-3.5 h-3.5 text-slate-500" />
+                  <Car className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
                 )}
-                <span className="text-[9px] font-mono opacity-80">{slot.status}</span>
+                <span className="text-[8px] sm:text-[9px] font-mono opacity-80 truncate w-full">
+                  <span className="sm:hidden">{isCharging ? 'Chg' : isOccupied ? 'Occ' : 'Free'}</span>
+                  <span className="hidden sm:inline">{slot.status}</span>
+                </span>
               </button>
             );
           })}

@@ -14,8 +14,10 @@ import {
   CheckCircle2, 
   Zap, 
   Trees, 
-  Sparkles,
-  Search
+  Sparkles, 
+  Search,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 export default function BimModelView({ subRoute }) {
@@ -31,6 +33,7 @@ export default function BimModelView({ subRoute }) {
   const [sunAngle, setSunAngle] = useState(45); // 0 to 180 deg
   const [materialMode, setMaterialMode] = useState('realistic'); // realistic, thermal, solar, structural
   const [cameraPreset, setCameraPreset] = useState('isometric');
+  const [mobileControlsOpen, setMobileControlsOpen] = useState(false);
 
   // Floor explorer state
   const [selectedFloorLevel, setSelectedFloorLevel] = useState(0); // Level 0 (Ground) default
@@ -211,18 +214,26 @@ export default function BimModelView({ subRoute }) {
 
     // Handle Resize
     const handleResize = () => {
-      if (!mountRef.current) return;
+      if (!mountRef.current || !renderer || !camera) return;
       const w = mountRef.current.clientWidth;
       const h = mountRef.current.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      if (w > 0 && h > 0) {
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      }
     };
     window.addEventListener('resize', handleResize);
+    let ro = null;
+    if (window.ResizeObserver && mountRef.current) {
+      ro = new ResizeObserver(handleResize);
+      ro.observe(mountRef.current);
+    }
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
+      if (ro) ro.disconnect();
       if (mountRef.current && renderer.domElement) {
         mountRef.current.removeChild(renderer.domElement);
       }
@@ -274,153 +285,171 @@ export default function BimModelView({ subRoute }) {
   const selectedFloorObj = FLOOR_EXPLORER_DATA.find(f => f.level === selectedFloorLevel) || FLOOR_EXPLORER_DATA[1];
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-3.5 sm:p-5 md:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-cyan-400">
-            <Layers className="w-4 h-4 text-blue-400" />
+          <div className="flex items-center gap-2 text-xs font-mono text-cyan-600">
+            <Layers className="w-4 h-4 text-blue-500" />
             <span>AUTODESK REVIT BIM ENGINE</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
-            BIM Model Explorer <span className="text-cyan-400">(B+G+9)</span>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 mt-0.5">
+            BIM Model Explorer <span className="text-cyan-600">(B+G+9)</span>
           </h1>
-          <p className="text-slate-500 text-xs mt-1">
+          <p className="text-slate-500 text-xs mt-1 max-w-2xl leading-relaxed">
             Interactive WebGL 3D building visualizer with exploded stack view, thermal materials, and 2D floor explorer.
           </p>
         </div>
 
         {/* Tab Selector */}
-        <div className="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+        <div className="flex gap-1.5 sm:gap-2 bg-slate-100 p-1 sm:p-1.5 rounded-xl border border-slate-200 self-start md:self-auto">
           <button
             onClick={() => setActiveTab('3d-building')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-semibold transition ${
               activeTab === '3d-building' 
                 ? 'bg-cyan-600 text-white shadow-md' 
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            <Box className="w-4 h-4" />
+            <Box className="w-4 h-4 shrink-0" />
             <span>3D Building Model</span>
           </button>
 
           <button
             onClick={() => setActiveTab('floor-explorer')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-semibold transition ${
               activeTab === 'floor-explorer' 
                 ? 'bg-cyan-600 text-white shadow-md' 
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            <Search className="w-4 h-4" />
-            <span>Floor Explorer (11 Levels)</span>
+            <Search className="w-4 h-4 shrink-0" />
+            <span>Floor Explorer</span>
           </button>
         </div>
       </div>
 
       {/* 3D BUILDING TAB CONTENT */}
       {activeTab === '3d-building' && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
           
           {/* 3D Canvas Viewport (3 Columns) */}
-          <div className="lg:col-span-3 glass-panel rounded-2xl border border-slate-200 relative h-[560px] overflow-hidden flex flex-col justify-between">
+          <div className="lg:col-span-3 glass-panel rounded-2xl border border-slate-200 relative h-[320px] sm:h-[420px] md:h-[480px] lg:h-[560px] overflow-hidden flex flex-col justify-between">
             
             {/* Top Toolbar Overlay */}
-            <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+            <div className="absolute top-2.5 left-2.5 right-2.5 sm:top-4 sm:left-4 sm:right-4 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
               
               {/* Camera Presets */}
-              <div className="flex items-center gap-1 bg-white/90 backdrop-blur-md p-1 rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
                 <button
                   onClick={() => handleCameraPreset('isometric')}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition ${cameraPreset === 'isometric' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-semibold transition shrink-0 ${cameraPreset === 'isometric' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
                 >
                   Isometric
                 </button>
                 <button
                   onClick={() => handleCameraPreset('front')}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition ${cameraPreset === 'front' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-semibold transition shrink-0 ${cameraPreset === 'front' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
                 >
                   Front
                 </button>
                 <button
                   onClick={() => handleCameraPreset('top')}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition ${cameraPreset === 'top' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-semibold transition shrink-0 ${cameraPreset === 'top' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
                 >
                   Top Plan
                 </button>
                 <button
                   onClick={() => handleCameraPreset('courtyard')}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition ${cameraPreset === 'courtyard' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-semibold transition shrink-0 ${cameraPreset === 'courtyard' ? 'bg-cyan-600 text-white' : 'text-slate-600 hover:text-slate-900'}`}
                 >
                   Courtyard
                 </button>
               </div>
 
               {/* Status Badge */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200 text-xs text-slate-700 shadow-sm">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="font-mono">Revit 3D Canvas Active</span>
+              <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 text-[11px] sm:text-xs text-slate-700 shadow-sm">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-mono">Revit 3D Active</span>
               </div>
             </div>
 
             {/* Three.js Canvas mount container */}
             <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
-            {/* Bottom Controls Overlay */}
-            <div className="absolute bottom-4 left-4 right-4 z-10 bg-white/95 backdrop-blur-md p-4 rounded-xl border border-slate-200 shadow-lg grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Bottom Controls Overlay - Responsive with Mobile Toggle */}
+            <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 z-10 bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-slate-200 shadow-lg">
               
-              {/* Explosion Slider */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-semibold text-slate-700">
-                  <span className="flex items-center gap-1.5">
-                    <Sliders className="w-3.5 h-3.5 text-cyan-400" />
-                    Floor Explosion View
-                  </span>
-                  <span className="font-mono text-cyan-400">{Math.round(explosion * 100)}%</span>
+              {/* Mobile Controls Collapsible Header */}
+              <div 
+                className="flex sm:hidden items-center justify-between cursor-pointer"
+                onClick={() => setMobileControlsOpen(!mobileControlsOpen)}
+              >
+                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-cyan-600" />
+                  3D View Controls & Sliders
+                </span>
+                <div className="flex items-center gap-1 text-[11px] text-cyan-600 font-semibold">
+                  <span>{mobileControlsOpen ? 'Hide' : 'Expand'}</span>
+                  {mobileControlsOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={explosion}
-                  onChange={(e) => setExplosion(parseFloat(e.target.value))}
-                  className="w-full accent-cyan-500 cursor-pointer"
-                />
               </div>
 
-              {/* Sun Position Slider */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-semibold text-slate-700">
-                  <span className="flex items-center gap-1.5">
-                    <Sun className="w-3.5 h-3.5 text-yellow-400" />
-                    Sun Angle Simulation
-                  </span>
-                  <span className="font-mono text-yellow-400">{sunAngle}°</span>
+              {/* Slider Grid (always visible on sm+, toggleable on mobile) */}
+              <div className={`${mobileControlsOpen ? 'grid pt-2.5' : 'hidden'} sm:grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4`}>
+                {/* Explosion Slider */}
+                <div className="space-y-1 sm:space-y-1.5">
+                  <div className="flex justify-between text-xs font-semibold text-slate-700">
+                    <span className="flex items-center gap-1.5">
+                      <Sliders className="w-3.5 h-3.5 text-cyan-500" />
+                      Explosion View
+                    </span>
+                    <span className="font-mono text-cyan-600">{Math.round(explosion * 100)}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={explosion}
+                    onChange={(e) => setExplosion(parseFloat(e.target.value))}
+                    className="w-full accent-cyan-500 cursor-pointer h-2"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="180"
-                  value={sunAngle}
-                  onChange={(e) => setSunAngle(parseInt(e.target.value))}
-                  className="w-full accent-yellow-500 cursor-pointer"
-                />
-              </div>
 
-              {/* Toggles */}
-              <div className="flex items-center justify-end gap-3">
-                <button
-                  onClick={() => setWireframe(!wireframe)}
-                  className={`px-3 py-2 rounded-xl text-xs font-semibold border transition ${
-                    wireframe 
-                      ? 'bg-cyan-50 text-cyan-700 border-cyan-300' 
-                      : 'bg-slate-100 text-slate-600 border-slate-300 hover:text-slate-900'
-                  }`}
-                >
-                  {wireframe ? 'Wireframe ON' : 'Solid Mesh'}
-                </button>
+                {/* Sun Position Slider */}
+                <div className="space-y-1 sm:space-y-1.5">
+                  <div className="flex justify-between text-xs font-semibold text-slate-700">
+                    <span className="flex items-center gap-1.5">
+                      <Sun className="w-3.5 h-3.5 text-yellow-500" />
+                      Sun Simulation
+                    </span>
+                    <span className="font-mono text-yellow-500">{sunAngle}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="180"
+                    value={sunAngle}
+                    onChange={(e) => setSunAngle(parseInt(e.target.value))}
+                    className="w-full accent-yellow-500 cursor-pointer h-2"
+                  />
+                </div>
+
+                {/* Toggles */}
+                <div className="flex items-center justify-start sm:justify-end gap-3 pt-1 sm:pt-0">
+                  <button
+                    onClick={() => setWireframe(!wireframe)}
+                    className={`w-full sm:w-auto px-3 py-1.5 rounded-xl text-xs font-semibold border transition text-center ${
+                      wireframe 
+                        ? 'bg-cyan-50 text-cyan-700 border-cyan-300' 
+                        : 'bg-slate-100 text-slate-600 border-slate-300 hover:text-slate-900'
+                    }`}
+                  >
+                    {wireframe ? 'Wireframe ON' : 'Solid Mesh'}
+                  </button>
+                </div>
               </div>
 
             </div>
@@ -506,97 +535,122 @@ export default function BimModelView({ subRoute }) {
 
       {/* FLOOR EXPLORER TAB CONTENT */}
       {activeTab === 'floor-explorer' && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="space-y-4">
           
-          {/* Level Selector Sidebar (1 Column) */}
-          <div className="glass-panel p-4 rounded-2xl border border-slate-200 space-y-2 max-h-[580px] overflow-y-auto">
-            <h3 className="font-bold text-slate-500 text-xs px-2 mb-2 uppercase tracking-wider">
-              Select Floor Level
-            </h3>
-
+          {/* Mobile Horizontal Floor Selector (phones & tablets) */}
+          <div className="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-1">
             {FLOOR_EXPLORER_DATA.map(f => {
               const isSelected = selectedFloorLevel === f.level;
               return (
-                <div
+                <button
                   key={f.level}
                   onClick={() => setSelectedFloorLevel(f.level)}
-                  className={`p-3 rounded-xl border text-xs cursor-pointer transition flex items-center justify-between ${
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold shrink-0 transition flex items-center gap-1.5 ${
                     isSelected 
-                      ? 'bg-gradient-to-r from-cyan-600 to-blue-600 border-cyan-400 text-white font-semibold shadow-md' 
-                      : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                      ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md' 
+                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <div className="space-y-0.5">
-                    <span className="font-bold text-sm block">{f.name}</span>
-                    <span className={`text-[10px] ${isSelected ? 'text-cyan-100' : 'text-slate-500'}`}>{f.type}</span>
-                  </div>
-                  <span className={`font-mono text-[10px] px-2 py-0.5 rounded ${isSelected ? 'bg-white/20 text-white' : 'bg-white text-slate-600 border border-slate-200'}`}>
-                    {f.areaSqM} m²
+                  <span>{f.name}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                    {f.areaSqM}m²
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>
 
-          {/* Architectural Floor Plan Card (3 Columns) */}
-          <div className="lg:col-span-3 glass-panel p-6 rounded-2xl border border-slate-200 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
             
-            {/* Header info */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-              <div>
-                <span className="font-mono text-xs text-cyan-400 font-bold px-2.5 py-1 rounded bg-cyan-50 border border-cyan-200">
-                  REVIT LEVEL SPECIFICATION
-                </span>
-                <h2 className="text-2xl font-extrabold text-slate-900 mt-1">{selectedFloorObj.name}</h2>
-                <p className="text-xs text-slate-500 mt-0.5">{selectedFloorObj.type}</p>
-              </div>
+            {/* Desktop Level Selector Sidebar (1 Column) */}
+            <div className="hidden lg:block glass-panel p-4 rounded-2xl border border-slate-200 space-y-2 max-h-[580px] overflow-y-auto">
+              <h3 className="font-bold text-slate-500 text-xs px-2 mb-2 uppercase tracking-wider">
+                Select Floor Level
+              </h3>
 
-              <div className="flex items-center gap-3 text-xs font-mono">
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="text-[10px] text-slate-500 block">Height</span>
-                  <span className="font-bold text-cyan-400">{selectedFloorObj.heightMm} mm</span>
-                </div>
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="text-[10px] text-slate-500 block">Floor Area</span>
-                  <span className="font-bold text-emerald-400">{selectedFloorObj.areaSqM} sq.m</span>
-                </div>
-              </div>
+              {FLOOR_EXPLORER_DATA.map(f => {
+                const isSelected = selectedFloorLevel === f.level;
+                return (
+                  <div
+                    key={f.level}
+                    onClick={() => setSelectedFloorLevel(f.level)}
+                    className={`p-3 rounded-xl border text-xs cursor-pointer transition flex items-center justify-between ${
+                      isSelected 
+                        ? 'bg-gradient-to-r from-cyan-600 to-blue-600 border-cyan-400 text-white font-semibold shadow-md' 
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-sm block">{f.name}</span>
+                      <span className={`text-[10px] ${isSelected ? 'text-cyan-100' : 'text-slate-500'}`}>{f.type}</span>
+                    </div>
+                    <span className={`font-mono text-[10px] px-2 py-0.5 rounded ${isSelected ? 'bg-white/20 text-white' : 'bg-white text-slate-600 border border-slate-200'}`}>
+                      {f.areaSqM} m²
+                    </span>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* 2D Architectural Schematic Vector Viewport */}
-            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 relative min-h-[300px] flex flex-col items-center justify-center space-y-4">
-              <div className="w-full max-w-xl border-2 border-cyan-500/40 rounded-xl p-4 bg-cyan-50/50 relative space-y-4">
-                <div className="flex items-center justify-between border-b border-cyan-200/60 pb-2 text-xs font-mono text-cyan-400">
-                  <span>GRID: A1 - D4 (8000mm x 8000mm)</span>
-                  <span>CENTRAL COURTYARD ATRIUM</span>
+            {/* Architectural Floor Plan Card (3 Columns) */}
+            <div className="lg:col-span-3 glass-panel p-4 sm:p-6 rounded-2xl border border-slate-200 space-y-4 sm:space-y-6">
+              
+              {/* Header info */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-200 pb-4">
+                <div>
+                  <span className="font-mono text-xs text-cyan-600 font-bold px-2.5 py-1 rounded bg-cyan-50 border border-cyan-200">
+                    REVIT LEVEL SPECIFICATION
+                  </span>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">{selectedFloorObj.name}</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">{selectedFloorObj.type}</p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 h-40">
-                  <div className="border border-slate-200 bg-white rounded-lg p-2 flex flex-col justify-between text-[11px] text-slate-600 shadow-sm">
-                    <span className="font-bold text-cyan-400">ZONE A (North)</span>
-                    <span className="text-[10px] text-slate-500">Residential / Office Unit</span>
-                    <span className="font-mono text-[9px] text-emerald-400">Daylight: 5.2%</span>
+                <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono">
+                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Height</span>
+                    <span className="font-bold text-cyan-600">{selectedFloorObj.heightMm} mm</span>
                   </div>
-
-                  <div className="border-2 border-dashed border-teal-500/60 bg-teal-50 rounded-lg p-2 flex flex-col items-center justify-center text-center text-xs text-teal-700">
-                    <Trees className="w-5 h-5 text-teal-400 mb-1" />
-                    <span className="font-bold text-[11px]">Courtyard Vent Shaft</span>
-                    <span className="text-[9px] text-teal-400">Natural Light Scoop</span>
+                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Floor Area</span>
+                    <span className="font-bold text-emerald-600">{selectedFloorObj.areaSqM} sq.m</span>
                   </div>
-
-                  <div className="border border-slate-200 bg-white rounded-lg p-2 flex flex-col justify-between text-[11px] text-slate-600 shadow-sm">
-                    <span className="font-bold text-cyan-400">ZONE B (South)</span>
-                    <span className="text-[10px] text-slate-500">Residential / Retail Unit</span>
-                    <span className="font-mono text-[9px] text-emerald-400">Daylight: 4.8%</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-2 border-t border-cyan-200 text-[10px] text-slate-500 font-mono">
-                  <span>CORE: Elevator (3 Lifts) + Staircase 1 & 2</span>
-                  <span>BALCONY RECESSED 1800mm</span>
                 </div>
               </div>
-            </div>
+
+              {/* 2D Architectural Schematic Vector Viewport */}
+              <div className="bg-slate-50 rounded-2xl border border-slate-200 p-4 sm:p-6 relative min-h-[260px] sm:min-h-[300px] flex flex-col items-center justify-center space-y-4">
+                <div className="w-full max-w-xl border-2 border-cyan-500/40 rounded-xl p-3 sm:p-4 bg-cyan-50/50 relative space-y-3 sm:space-y-4">
+                  <div className="flex flex-col xs:flex-row xs:items-center justify-between border-b border-cyan-200/60 pb-2 text-[10px] sm:text-xs font-mono text-cyan-700 gap-1">
+                    <span>GRID: A1 - D4 (8000x8000mm)</span>
+                    <span>CENTRAL COURTYARD ATRIUM</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                    <div className="border border-slate-200 bg-white rounded-lg p-2.5 flex flex-col justify-between text-[11px] text-slate-600 shadow-sm min-h-[80px]">
+                      <span className="font-bold text-cyan-700">ZONE A (North)</span>
+                      <span className="text-[10px] text-slate-500">Residential / Office Unit</span>
+                      <span className="font-mono text-[9px] text-emerald-600">Daylight: 5.2%</span>
+                    </div>
+
+                    <div className="border-2 border-dashed border-teal-500/60 bg-teal-50 rounded-lg p-2.5 flex flex-col items-center justify-center text-center text-xs text-teal-800 min-h-[80px]">
+                      <Trees className="w-5 h-5 text-teal-500 mb-1" />
+                      <span className="font-bold text-[11px]">Courtyard Vent Shaft</span>
+                      <span className="text-[9px] text-teal-600">Natural Light Scoop</span>
+                    </div>
+
+                    <div className="border border-slate-200 bg-white rounded-lg p-2.5 flex flex-col justify-between text-[11px] text-slate-600 shadow-sm min-h-[80px]">
+                      <span className="font-bold text-cyan-700">ZONE B (South)</span>
+                      <span className="text-[10px] text-slate-500">Residential / Retail Unit</span>
+                      <span className="font-mono text-[9px] text-emerald-600">Daylight: 4.8%</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col xs:flex-row xs:items-center justify-between pt-2 border-t border-cyan-200 text-[10px] text-slate-500 font-mono gap-1">
+                    <span>CORE: 3 Lifts + Staircases</span>
+                    <span>BALCONY RECESSED 1800mm</span>
+                  </div>
+                </div>
+              </div>
 
             {/* Description & Key Features */}
             <div className="space-y-3">
@@ -616,8 +670,9 @@ export default function BimModelView({ subRoute }) {
               </div>
             </div>
 
-          </div>
+            </div>
 
+          </div>
         </div>
       )}
 

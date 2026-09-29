@@ -10,7 +10,8 @@ import {
   EyeOff,
   KeyRound,
   UserPlus,
-  LogIn
+  LogIn,
+  ChevronDown
 } from 'lucide-react';
 
 export const PERSONAS = [
@@ -21,7 +22,7 @@ export const PERSONAS = [
     avatar: 'JE',
     color: 'from-amber-500 to-yellow-600',
     borderColor: 'border-amber-500/40',
-    description: 'Full access to BIM metrics, structural drawings, Forma climate studies, and 30-second walkthrough video.',
+    description: 'Full access to BIM metrics, structural drawings, Forma climate studies, and IoT telemetry.',
     badge: 'Evaluation Access'
   },
   {
@@ -128,7 +129,7 @@ export default function LoginView({ onLoginSuccess, onNavigate }) {
   const inputClass = "w-full bg-slate-50 border border-slate-300 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition";
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center relative overflow-hidden bg-slate-50 bg-grid-pattern p-4">
+    <div className="min-h-[calc(100dvh-4rem)] flex items-center justify-center relative overflow-hidden bg-slate-50 bg-grid-pattern p-3 sm:p-4 py-6 sm:py-10">
       {/* Background glow effects */}
       <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-cyan-500/8 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none" />
@@ -182,7 +183,7 @@ export default function LoginView({ onLoginSuccess, onNavigate }) {
           </div>
 
           {/* Form Body */}
-          <div className="p-6 space-y-5">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
             
             {/* Error Message */}
             {error && (
@@ -296,13 +297,14 @@ export default function LoginView({ onLoginSuccess, onNavigate }) {
                     <select
                       value={regRole}
                       onChange={(e) => setRegRole(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition appearance-none cursor-pointer"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-11 pr-10 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition appearance-none cursor-pointer"
                     >
                       <option value="jury" className="bg-white text-slate-800">SIH Jury Evaluator</option>
                       <option value="architect" className="bg-white text-slate-800">Lead BIM Architect</option>
                       <option value="facility" className="bg-white text-slate-800">Facility Operations Manager</option>
                       <option value="resident" className="bg-white text-slate-800">Resident / Visitor</option>
                     </select>
+                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-4 pointer-events-none" />
                   </div>
                 </div>
 

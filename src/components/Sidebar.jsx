@@ -20,7 +20,8 @@ import {
   Store,
   Briefcase,
   Sliders,
-  UserCheck
+  UserCheck,
+  X
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -30,7 +31,9 @@ export default function Sidebar({
   activePersona, 
   unreadAlertsCount = 2,
   collapsed,
-  setCollapsed
+  setCollapsed,
+  isMobile = false,
+  onCloseMobile
 }) {
   const [openSubMenus, setOpenSubMenus] = useState({
     findAPlace: true,
@@ -42,6 +45,13 @@ export default function Sidebar({
       ...prev,
       [menuKey]: !prev[menuKey]
     }));
+  };
+
+  const handleItemClick = (route, subRoute = null) => {
+    onNavigate(route, subRoute);
+    if (isMobile && onCloseMobile) {
+      onCloseMobile();
+    }
   };
 
   const navItemClass = (route, subRoute = null) => {
@@ -65,15 +75,19 @@ export default function Sidebar({
     }`;
   };
 
+  const isExpanded = isMobile || !collapsed;
+
   return (
-    <aside className={`h-screen sticky top-0 bg-slate-900/95 border-r border-slate-800 flex flex-col transition-all duration-300 z-30 select-none ${collapsed ? 'w-20' : 'w-72'}`}>
+    <aside className={`h-full md:h-screen sticky top-0 bg-slate-900/95 border-r border-slate-800 flex flex-col transition-all duration-300 z-30 select-none pb-safe ${
+      isMobile ? 'w-72 max-w-[85vw]' : (collapsed ? 'w-20' : 'w-72')
+    }`}>
       {/* Header Logo */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/20 shrink-0">
             <Building2 className="w-6 h-6" />
           </div>
-          {!collapsed && (
+          {isExpanded && (
             <div className="flex flex-col">
               <span className="font-extrabold tracking-tight text-white text-base leading-tight">
                 URBAN FACADE <span className="text-cyan-400">360</span>
@@ -82,13 +96,23 @@ export default function Sidebar({
             </div>
           )}
         </div>
-        <button 
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-          title={collapsed ? "Expand menu" : "Collapse menu"}
-        >
-          {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronDown className="w-5 h-5 rotate-90" />}
-        </button>
+        {isMobile ? (
+          <button 
+            onClick={onCloseMobile}
+            className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition"
+            title="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        ) : (
+          <button 
+            onClick={() => setCollapsed(!collapsed)}
+            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+            title={collapsed ? "Expand menu" : "Collapse menu"}
+          >
+            {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronDown className="w-5 h-5 rotate-90" />}
+          </button>
+        )}
       </div>
 
       {/* User Login Persona Banner */}
@@ -97,16 +121,16 @@ export default function Sidebar({
           <div className="w-8 h-8 rounded-full bg-cyan-900/60 border border-cyan-500/40 flex items-center justify-center text-cyan-300 text-xs font-bold shrink-0">
             {activePersona?.avatar || "SIH"}
           </div>
-          {!collapsed && (
+          {isExpanded && (
             <div className="flex flex-col truncate">
               <span className="text-xs font-semibold text-slate-200 truncate">{activePersona?.name || "Jury / Evaluator"}</span>
               <span className="text-[10px] text-cyan-400 font-mono">{activePersona?.role || "Autodesk Assessor"}</span>
             </div>
           )}
         </div>
-        {!collapsed && (
+        {isExpanded && (
           <button 
-            onClick={() => onNavigate('login')}
+            onClick={() => handleItemClick('login')}
             className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-700/60 transition"
             title="Switch Login Persona"
           >
@@ -121,21 +145,21 @@ export default function Sidebar({
         {/* LOGIN PAGE LINK */}
         <div 
           className={navItemClass('login')}
-          onClick={() => onNavigate('login')}
+          onClick={() => handleItemClick('login')}
           title="Login Page"
         >
           <UserCheck className="w-5 h-5 text-indigo-400 shrink-0" />
-          {!collapsed && <span>Login Page</span>}
+          {isExpanded && <span>Login Page</span>}
         </div>
 
         {/* 🏠 HOME */}
         <div 
           className={navItemClass('home')}
-          onClick={() => onNavigate('home')}
+          onClick={() => handleItemClick('home')}
           title="Home Dashboard"
         >
           <Home className="w-5 h-5 text-sky-400 shrink-0" />
-          {!collapsed && <span>Home</span>}
+          {isExpanded && <span>Home</span>}
         </div>
 
         {/* 🧭 FIND A PLACE */}
@@ -156,39 +180,39 @@ export default function Sidebar({
           >
             <div className="flex items-center gap-3">
               <Compass className="w-5 h-5 text-amber-400 shrink-0" />
-              {!collapsed && <span>Find a Place</span>}
+              {isExpanded && <span>Find a Place</span>}
             </div>
-            {!collapsed && (
+            {isExpanded && (
               <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openSubMenus.findAPlace ? 'rotate-180' : ''}`} />
             )}
           </div>
 
-          {!collapsed && openSubMenus.findAPlace && (
+          {isExpanded && openSubMenus.findAPlace && (
             <div className="mt-1 space-y-0.5 animate-fadeIn">
               <div 
                 className={subNavItemClass('find-a-place', 'search-room')}
-                onClick={() => onNavigate('find-a-place', 'search-room')}
+                onClick={() => handleItemClick('find-a-place', 'search-room')}
               >
                 <Building className="w-3.5 h-3.5 text-slate-400" />
                 <span>Search Room</span>
               </div>
               <div 
                 className={subNavItemClass('find-a-place', 'search-office')}
-                onClick={() => onNavigate('find-a-place', 'search-office')}
+                onClick={() => handleItemClick('find-a-place', 'search-office')}
               >
                 <Briefcase className="w-3.5 h-3.5 text-slate-400" />
                 <span>Search Office</span>
               </div>
               <div 
                 className={subNavItemClass('find-a-place', 'search-shop')}
-                onClick={() => onNavigate('find-a-place', 'search-shop')}
+                onClick={() => handleItemClick('find-a-place', 'search-shop')}
               >
                 <Store className="w-3.5 h-3.5 text-slate-400" />
                 <span>Search Shop</span>
               </div>
               <div 
                 className={subNavItemClass('find-a-place', 'search-facility')}
-                onClick={() => onNavigate('find-a-place', 'search-facility')}
+                onClick={() => handleItemClick('find-a-place', 'search-facility')}
               >
                 <Sliders className="w-3.5 h-3.5 text-slate-400" />
                 <span>Search Facility</span>
@@ -204,7 +228,7 @@ export default function Sidebar({
               currentRoute === 'bim-model' ? 'bg-slate-800/80 text-cyan-300' : ''
             }`}
             onClick={() => {
-              if (collapsed) {
+              if (collapsed && !isMobile) {
                 setCollapsed(false);
                 setOpenSubMenus(prev => ({ ...prev, bimModel: true }));
               } else {
@@ -215,25 +239,25 @@ export default function Sidebar({
           >
             <div className="flex items-center gap-3">
               <Layers className="w-5 h-5 text-blue-400 shrink-0" />
-              {!collapsed && <span>BIM Model</span>}
+              {isExpanded && <span>BIM Model</span>}
             </div>
-            {!collapsed && (
+            {isExpanded && (
               <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openSubMenus.bimModel ? 'rotate-180' : ''}`} />
             )}
           </div>
 
-          {!collapsed && openSubMenus.bimModel && (
+          {isExpanded && openSubMenus.bimModel && (
             <div className="mt-1 space-y-0.5 animate-fadeIn">
               <div 
                 className={subNavItemClass('bim-model', '3d-building')}
-                onClick={() => onNavigate('bim-model', '3d-building')}
+                onClick={() => handleItemClick('bim-model', '3d-building')}
               >
                 <Building2 className="w-3.5 h-3.5 text-cyan-400" />
                 <span>3D Building</span>
               </div>
               <div 
                 className={subNavItemClass('bim-model', 'floor-explorer')}
-                onClick={() => onNavigate('bim-model', 'floor-explorer')}
+                onClick={() => handleItemClick('bim-model', 'floor-explorer')}
               >
                 <Search className="w-3.5 h-3.5 text-blue-400" />
                 <span>Floor Explorer</span>
@@ -245,11 +269,11 @@ export default function Sidebar({
         {/* 🚗 PARKING & EV */}
         <div 
           className={navItemClass('parking-ev')}
-          onClick={() => onNavigate('parking-ev')}
+          onClick={() => handleItemClick('parking-ev')}
           title="Parking & EV Charging"
         >
           <Car className="w-5 h-5 text-emerald-400 shrink-0" />
-          {!collapsed && (
+          {isExpanded && (
             <div className="flex items-center justify-between flex-1">
               <span>Parking & EV</span>
               <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800/60">
@@ -262,51 +286,51 @@ export default function Sidebar({
         {/* 🌿 COURTYARD & CLIMATE */}
         <div 
           className={navItemClass('courtyard-climate')}
-          onClick={() => onNavigate('courtyard-climate')}
+          onClick={() => handleItemClick('courtyard-climate')}
           title="Courtyard & Climate (Forma)"
         >
           <Trees className="w-5 h-5 text-teal-400 shrink-0" />
-          {!collapsed && <span>Courtyard & Climate</span>}
+          {isExpanded && <span>Courtyard & Climate</span>}
         </div>
 
         {/* 🏗 STRUCTURE */}
         <div 
           className={navItemClass('structure')}
-          onClick={() => onNavigate('structure')}
+          onClick={() => handleItemClick('structure')}
           title="Structural Detailing & Rebar"
         >
           <Hammer className="w-5 h-5 text-orange-400 shrink-0" />
-          {!collapsed && <span>Structure</span>}
+          {isExpanded && <span>Structure</span>}
         </div>
 
         {/* 🌞 FACADE */}
         <div 
           className={navItemClass('facade')}
-          onClick={() => onNavigate('facade')}
+          onClick={() => handleItemClick('facade')}
           title="Kinetic Climate-Responsive Facade"
         >
           <Sun className="w-5 h-5 text-yellow-400 shrink-0" />
-          {!collapsed && <span>Facade</span>}
+          {isExpanded && <span>Facade</span>}
         </div>
 
         {/* 📊 BUILDING MONITORING */}
         <div 
           className={navItemClass('building-monitoring')}
-          onClick={() => onNavigate('building-monitoring')}
+          onClick={() => handleItemClick('building-monitoring')}
           title="IoT Building Monitoring"
         >
           <Activity className="w-5 h-5 text-purple-400 shrink-0" />
-          {!collapsed && <span>Building Monitoring</span>}
+          {isExpanded && <span>Building Monitoring</span>}
         </div>
 
         {/* 🚨 ALERTS */}
         <div 
           className={navItemClass('alerts')}
-          onClick={() => onNavigate('alerts')}
+          onClick={() => handleItemClick('alerts')}
           title="Alerts & System Logs"
         >
           <Bell className="w-5 h-5 text-rose-400 shrink-0" />
-          {!collapsed && (
+          {isExpanded && (
             <div className="flex items-center justify-between flex-1">
               <span>Alerts</span>
               {unreadAlertsCount > 0 && (
@@ -318,27 +342,12 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* 🎥 WALKTHROUGH */}
-        <div 
-          className={navItemClass('walkthrough')}
-          onClick={() => onNavigate('walkthrough')}
-          title="30-Sec 3D Walkthrough Tour"
-        >
-          <Video className="w-5 h-5 text-pink-400 shrink-0" />
-          {!collapsed && (
-            <div className="flex items-center justify-between flex-1">
-              <span>Walkthrough</span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] bg-pink-950 text-pink-300 border border-pink-800/60 font-mono">
-                30s Tour
-              </span>
-            </div>
-          )}
-        </div>
+
 
       </div>
 
       {/* Footer / Autodesk Badge */}
-      {!collapsed && (
+      {isExpanded && (
         <div className="p-3 border-t border-slate-800 bg-slate-950/60 text-center">
           <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />

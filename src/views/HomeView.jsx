@@ -22,52 +22,52 @@ import {
 
 export default function HomeView({ onNavigate }) {
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-3.5 sm:p-5 md:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
       
       {/* Hero Banner Header */}
-      <div className="relative rounded-3xl overflow-hidden glass-panel border border-slate-200 p-6 md:p-8 bg-gradient-to-r from-slate-50 via-white to-cyan-50/60">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden glass-panel border border-slate-200 p-4 sm:p-6 md:p-8 bg-gradient-to-r from-slate-50 via-white to-cyan-50/60">
+        <div className="absolute top-0 right-0 w-72 sm:w-96 h-72 sm:h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
         
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-cyan-50 text-cyan-600 border border-cyan-200 text-xs font-semibold font-mono">
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
+          <div className="space-y-2.5 sm:space-y-3 max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-cyan-50 text-cyan-600 border border-cyan-200 text-[11px] sm:text-xs font-semibold font-mono">
                 {PROJECT_METRICS.id}
               </span>
-              <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 text-xs font-semibold">
+              <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 text-[11px] sm:text-xs font-semibold">
                 Autodesk Grand Finale Model
               </span>
             </div>
 
-            <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
               Urban Mixed-Use Design Challenge <br />
-              <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Centrally Located B+G+9 Building
               </span>
             </h1>
 
-            <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
+            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
               Designed using Autodesk Revit BIM methodology. Featuring active commercial activations on Ground & 1st floor podiums, 8 residential tower levels, biophilic central landscape courtyard, kinetic climate-responsive facade, and basement parking with 200 slots & 40 DC fast EV chargers.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono text-slate-600">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200">
-                <Building2 className="w-3.5 h-3.5 text-cyan-400" />
-                <span>11 Levels Total (B+G+9)</span>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1 sm:pt-2 text-[11px] sm:text-xs font-mono text-slate-600">
+              <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200">
+                <Building2 className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                <span>11 Levels (B+G+9)</span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200">
-                <Maximize2 className="w-3.5 h-3.5 text-blue-400" />
+              <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200">
+                <Maximize2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>Plot: {PROJECT_METRICS.plotAreaMm}</span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200">
-                <Trees className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Courtyard: {PROJECT_METRICS.courtyardAreaSqM} sq.m</span>
+              <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200">
+                <Trees className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>Courtyard: {PROJECT_METRICS.courtyardAreaSqM} m²</span>
               </div>
             </div>
           </div>
 
           {/* Action Cards */}
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-72 shrink-0">
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 sm:gap-3 w-full lg:w-72 shrink-0 pt-2 lg:pt-0">
             <button
               onClick={() => onNavigate('bim-model', '3d-building')}
               className="px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-xs transition shadow-lg shadow-cyan-200/50 flex items-center justify-between group"
@@ -80,12 +80,12 @@ export default function HomeView({ onNavigate }) {
             </button>
 
             <button
-              onClick={() => onNavigate('walkthrough')}
+              onClick={() => onNavigate('find-a-place')}
               className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 font-semibold text-xs border border-slate-300 transition flex items-center justify-between group"
             >
               <div className="flex items-center gap-2.5">
-                <Video className="w-4 h-4 text-pink-400" />
-                <span>30s 3D Video Tour</span>
+                <Compass className="w-4 h-4 text-amber-500" />
+                <span>Explore Space Directory</span>
               </div>
               <ArrowUpRight className="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </button>
@@ -94,7 +94,7 @@ export default function HomeView({ onNavigate }) {
       </div>
 
       {/* Primary Key Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         
         {/* Card 1: Building Levels */}
         <div 

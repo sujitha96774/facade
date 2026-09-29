@@ -45,26 +45,26 @@ export default function FindAPlaceView({ subRoute, searchQuery = '' }) {
   ];
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-3.5 sm:p-5 md:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-cyan-400">
-            <Compass className="w-4 h-4 text-amber-400" />
+          <div className="flex items-center gap-2 text-xs font-mono text-cyan-600">
+            <Compass className="w-4 h-4 text-amber-500" />
             <span>NAVIGATION & SPACE DIRECTORY</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
-            Find a Place in <span className="text-cyan-400">PS 26116 Building</span>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 mt-0.5">
+            Find a Place in <span className="text-cyan-600">PS 26116 Building</span>
           </h1>
-          <p className="text-slate-500 text-xs mt-1">
+          <p className="text-slate-500 text-xs mt-1 max-w-2xl leading-relaxed">
             Search residential apartments, commercial offices, podium retail shops, and basement EV facilities.
           </p>
         </div>
 
         {/* Search Input */}
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
           <input
             type="text"
             placeholder={`Search ${activeTab.toLowerCase()}s by name, floor, or ID...`}
@@ -75,8 +75,8 @@ export default function FindAPlaceView({ subRoute, searchQuery = '' }) {
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+      {/* Filter Tabs - Horizontal scroll on mobile */}
+      <div className="flex gap-2 border-b border-slate-200 pb-2.5 overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -84,9 +84,9 @@ export default function FindAPlaceView({ subRoute, searchQuery = '' }) {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition ${
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold shrink-0 transition ${
                 isActive 
-                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-200/50' 
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md shadow-cyan-200/50' 
                   : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200'
               }`}
             >
@@ -101,12 +101,12 @@ export default function FindAPlaceView({ subRoute, searchQuery = '' }) {
       </div>
 
       {/* Directory Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {filteredItems.map(item => (
           <div
             key={item.id}
             onClick={() => setSelectedItem(item)}
-            className="glass-panel p-5 rounded-2xl border border-slate-200 hover:border-cyan-500/50 hover:bg-slate-50 transition cursor-pointer group flex flex-col justify-between space-y-4"
+            className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-200 hover:border-cyan-500/50 hover:bg-slate-50 transition cursor-pointer group flex flex-col justify-between space-y-3 sm:space-y-4"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -153,52 +153,53 @@ export default function FindAPlaceView({ subRoute, searchQuery = '' }) {
 
       {/* Details Modal */}
       {selectedItem && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white glass-panel max-w-lg w-full rounded-2xl border border-slate-200 p-6 space-y-5 relative animate-fadeIn shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white glass-panel max-w-lg w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 p-4 sm:p-6 space-y-4 sm:space-y-5 relative animate-fadeIn shadow-2xl">
             <button 
               onClick={() => setSelectedItem(null)}
-              className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 p-1 rounded-lg bg-slate-100 hover:bg-slate-200 transition"
+              className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 text-slate-500 hover:text-slate-900 p-1 rounded-lg bg-slate-100 hover:bg-slate-200 transition"
+              aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="space-y-1">
-              <span className="font-mono text-xs font-bold text-cyan-400 px-2.5 py-1 rounded bg-cyan-50 border border-cyan-200 inline-block">
+            <div className="space-y-1 pr-8">
+              <span className="font-mono text-xs font-bold text-cyan-600 px-2.5 py-1 rounded bg-cyan-50 border border-cyan-200 inline-block">
                 {selectedItem.id}
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900 mt-1">{selectedItem.name}</h2>
+              <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">{selectedItem.name}</h2>
               <p className="text-xs text-slate-500">{selectedItem.type} • {selectedItem.floor}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-0.5">
                 <span className="text-slate-500 text-[10px]">Carpet Area</span>
-                <p className="font-bold text-slate-900 text-base">{selectedItem.areaSqM} sq.m</p>
+                <p className="font-bold text-slate-900 text-sm sm:text-base">{selectedItem.areaSqM} sq.m</p>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-0.5">
                 <span className="text-slate-500 text-[10px]">Revit Dimensions (mm)</span>
-                <p className="font-mono font-bold text-cyan-400 text-sm">{selectedItem.dimensionsMm}</p>
+                <p className="font-mono font-bold text-cyan-600 text-xs sm:text-sm">{selectedItem.dimensionsMm}</p>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-0.5">
                 <span className="text-slate-500 text-[10px]">Daylight Autonomy Index</span>
-                <p className="font-bold text-yellow-400 text-sm flex items-center gap-1">
+                <p className="font-bold text-yellow-500 text-xs sm:text-sm flex items-center gap-1">
                   <Sun className="w-3.5 h-3.5" />
                   <span>{selectedItem.daylightFactor}</span>
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-0.5">
                 <span className="text-slate-500 text-[10px]">EV Parking Access</span>
-                <p className="font-bold text-emerald-400 text-xs flex items-center gap-1">
+                <p className="font-bold text-emerald-600 text-xs flex items-center gap-1">
                   <Zap className="w-3.5 h-3.5" />
                   <span>{selectedItem.evAccess}</span>
                 </p>
               </div>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-0.5">
               <span className="text-slate-500 text-[10px]">Current Tenant / Allocation Status</span>
               <p className="font-semibold text-slate-700">{selectedItem.tenant}</p>
             </div>
