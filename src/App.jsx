@@ -3,7 +3,7 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import { Home, Layers, Compass, Car, Menu } from 'lucide-react';
 
-import LoginView, { PERSONAS } from './views/LoginView';
+import { PERSONAS } from './data/personas';
 import HomeView from './views/HomeView';
 import FindAPlaceView from './views/FindAPlaceView';
 import BimModelView from './views/BimModelView';
@@ -12,10 +12,11 @@ import CourtyardClimateView from './views/CourtyardClimateView';
 import StructureView from './views/StructureView';
 import FacadeView from './views/FacadeView';
 import BuildingMonitoringView from './views/BuildingMonitoringView';
+import AlertsView from './views/AlertsView';
 
 
 export default function App() {
-  const [currentRoute, setCurrentRoute] = useState('login');
+  const [currentRoute, setCurrentRoute] = useState('home');
   const [currentSubRoute, setCurrentSubRoute] = useState(null);
   const [activePersona, setActivePersona] = useState(PERSONAS[0]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -62,13 +63,6 @@ export default function App() {
 
   const renderActiveView = () => {
     switch (currentRoute) {
-      case 'login':
-        return (
-          <LoginView 
-            onLoginSuccess={(persona) => setActivePersona(persona)} 
-            onNavigate={handleNavigate} 
-          />
-        );
       case 'home':
         return <HomeView onNavigate={handleNavigate} />;
       case 'find-a-place':
@@ -88,48 +82,40 @@ export default function App() {
       case 'alerts':
         return <AlertsView />;
       default:
-        return (
-          <LoginView 
-            onLoginSuccess={(persona) => setActivePersona(persona)} 
-            onNavigate={handleNavigate} 
-          />
-        );
+        return <HomeView onNavigate={handleNavigate} />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 flex font-sans antialiased selection:bg-cyan-500 selection:text-white">
+    <div className="h-screen w-screen overflow-hidden bg-[#F4F2EC] text-[#17201D] flex font-sans antialiased selection:bg-[#557A68] selection:text-white relative">
       
       {/* Mobile Sidebar Overlay Backdrop */}
       {isMobile && mobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 transition-opacity animate-fadeIn"
+          className="fixed inset-0 bg-[#18221F]/70 backdrop-blur-sm z-40 transition-opacity animate-fadeIn"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar - Desktop: sticky side | Mobile: slide-over drawer */}
-      <div className={`
-        ${isMobile 
-          ? `fixed top-0 left-0 h-full z-50 transition-transform duration-300 ease-in-out ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`
-          : ''
-        }
-      `}>
-        <Sidebar 
-          currentRoute={currentRoute}
-          currentSubRoute={currentSubRoute}
-          onNavigate={handleNavigate}
-          activePersona={activePersona}
-          unreadAlertsCount={2}
-          collapsed={isMobile ? false : sidebarCollapsed}
-          setCollapsed={setSidebarCollapsed}
-          isMobile={isMobile}
-          onCloseMobile={() => setMobileMenuOpen(false)}
-        />
-      </div>
+      {/* 1. FIXED LEFT SIDEBAR */}
+      <Sidebar 
+        currentRoute={currentRoute}
+        currentSubRoute={currentSubRoute}
+        onNavigate={handleNavigate}
+        activePersona={activePersona}
+        unreadAlertsCount={2}
+        collapsed={isMobile ? false : sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+        isMobile={isMobile}
+        mobileMenuOpen={mobileMenuOpen}
+        onCloseMobile={() => setMobileMenuOpen(false)}
+      />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* 2 & 3. MAIN APPLICATION AREA (Starts after the fixed sidebar, height 100vh, overflow hidden) */}
+      <div className={`flex-1 flex flex-col h-screen overflow-hidden min-w-0 transition-all duration-300 ${
+        isMobile ? 'ml-0' : (sidebarCollapsed ? 'ml-20' : 'ml-72')
+      }`}>
+        {/* 2. FIXED/STICKY TOP HEADER (Starts after sidebar, remains fixed at top) */}
         <Navbar 
           currentRoute={currentRoute}
           currentSubRoute={currentSubRoute}
@@ -141,18 +127,19 @@ export default function App() {
           onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
         />
 
-        <main className={`flex-1 overflow-y-auto ${isMobile && currentRoute !== 'login' ? 'pb-20' : 'pb-6'}`}>
+        {/* 3. SCROLLABLE MAIN CONTENT AREA (ONLY vertical scrolling container) */}
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden ${isMobile ? 'pb-24' : 'pb-12'}`}>
           {renderActiveView()}
         </main>
       </div>
 
       {/* Mobile Bottom Quick-Action Bar */}
-      {isMobile && currentRoute !== 'login' && (
-        <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 flex items-center justify-around pb-safe shadow-lg">
+      {isMobile && (
+        <nav className="fixed bottom-0 left-0 right-0 z-30 bg-[#FFFFFF]/95 backdrop-blur-md border-t border-[#DCE0DA] px-2 py-1.5 flex items-center justify-around pb-safe shadow-lg">
           <button
             onClick={() => handleNavigate('home')}
-            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition ${
-              currentRoute === 'home' ? 'text-cyan-600 font-bold' : 'text-slate-500 hover:text-slate-800'
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition cursor-pointer ${
+              currentRoute === 'home' ? 'text-[#557A68] font-bold' : 'text-[#6B7772] hover:text-[#17201D]'
             }`}
           >
             <Home className="w-5 h-5" />
@@ -161,8 +148,8 @@ export default function App() {
 
           <button
             onClick={() => handleNavigate('bim-model', '3d-building')}
-            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition ${
-              currentRoute === 'bim-model' ? 'text-cyan-600 font-bold' : 'text-slate-500 hover:text-slate-800'
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition cursor-pointer ${
+              currentRoute === 'bim-model' ? 'text-[#557A68] font-bold' : 'text-[#6B7772] hover:text-[#17201D]'
             }`}
           >
             <Layers className="w-5 h-5" />
@@ -171,8 +158,8 @@ export default function App() {
 
           <button
             onClick={() => handleNavigate('find-a-place')}
-            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition ${
-              currentRoute === 'find-a-place' ? 'text-cyan-600 font-bold' : 'text-slate-500 hover:text-slate-800'
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition cursor-pointer ${
+              currentRoute === 'find-a-place' ? 'text-[#557A68] font-bold' : 'text-[#6B7772] hover:text-[#17201D]'
             }`}
           >
             <Compass className="w-5 h-5" />
@@ -181,8 +168,8 @@ export default function App() {
 
           <button
             onClick={() => handleNavigate('parking-ev')}
-            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition ${
-              currentRoute === 'parking-ev' ? 'text-cyan-600 font-bold' : 'text-slate-500 hover:text-slate-800'
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition cursor-pointer ${
+              currentRoute === 'parking-ev' ? 'text-[#557A68] font-bold' : 'text-[#6B7772] hover:text-[#17201D]'
             }`}
           >
             <Car className="w-5 h-5" />
@@ -191,7 +178,7 @@ export default function App() {
 
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-slate-500 hover:text-slate-800 transition"
+            className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-[#6B7772] hover:text-[#17201D] transition cursor-pointer"
           >
             <Menu className="w-5 h-5" />
             <span className="text-[10px]">Menu</span>

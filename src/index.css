@@ -1,25 +1,57 @@
 @import "tailwindcss";
 
+@theme {
+  --color-arch-sidebar: #18221F;
+  --color-arch-bg: #F4F2EC;
+  --color-arch-card: #FFFFFF;
+  --color-arch-primary: #557A68;
+  --color-arch-dark: #2F4940;
+  --color-arch-text: #17201D;
+  --color-arch-muted: #6B7772;
+  --color-arch-border: #DCE0DA;
+  --color-arch-available: #4D8A68;
+  --color-arch-occupied: #C7654D;
+  --color-arch-reserved: #C69A45;
+  --color-arch-ev: #3D8B8B;
+  --color-arch-critical: #B94A48;
+}
+
+:root {
+  --arch-sidebar: #18221F;
+  --arch-bg: #F4F2EC;
+  --arch-card: #FFFFFF;
+  --arch-primary: #557A68;
+  --arch-dark: #2F4940;
+  --arch-text: #17201D;
+  --arch-muted: #6B7772;
+  --arch-border: #DCE0DA;
+  --arch-available: #4D8A68;
+  --arch-occupied: #C7654D;
+  --arch-reserved: #C69A45;
+  --arch-ev: #3D8B8B;
+  --arch-critical: #B94A48;
+}
+
 @layer base {
   *, ::before, ::after {
     box-sizing: border-box;
   }
 
-  html {
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     scroll-behavior: smooth;
-    overflow-x: hidden;
   }
 
   body {
-    background-color: #ffffff;
-    color: #1e293b;
+    background-color: #F4F2EC;
+    color: #17201D;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-tap-highlight-color: transparent;
     text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
-    min-height: 100%;
-    min-height: 100dvh;
-    overflow-x: hidden;
     width: 100%;
   }
 }

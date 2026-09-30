@@ -50,14 +50,14 @@ export default function Navbar({
     };
 
     return (
-      <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 text-[11px] sm:text-xs text-slate-500 truncate">
-        <span className="hover:text-slate-700 cursor-pointer hidden md:inline shrink-0" onClick={() => onNavigate('home')}>PS 26116</span>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-400 hidden md:inline shrink-0" />
-        <span className="font-semibold text-slate-800 truncate">{formatName(currentRoute)}</span>
+      <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 text-[11px] sm:text-xs text-[#6B7772] truncate">
+        <span className="hover:text-[#17201D] cursor-pointer hidden md:inline shrink-0" onClick={() => onNavigate('home')}>PS 26116</span>
+        <ChevronRight className="w-3.5 h-3.5 text-[#DCE0DA] hidden md:inline shrink-0" />
+        <span className="font-semibold text-[#17201D] truncate">{formatName(currentRoute)}</span>
         {currentSubRoute && (
           <>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="font-semibold text-cyan-600 truncate">{formatName(currentSubRoute)}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-[#DCE0DA] shrink-0" />
+            <span className="font-semibold text-[#557A68] truncate">{formatName(currentSubRoute)}</span>
           </>
         )}
       </div>
@@ -74,7 +74,7 @@ export default function Navbar({
   };
 
   return (
-    <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 px-2.5 sm:px-4 md:px-6 sticky top-0 z-20 shadow-sm transition-all">
+    <header className="bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#DCE0DA] px-2.5 sm:px-4 md:px-6 sticky top-0 z-30 shadow-xs transition-all shrink-0">
       <div className="h-14 md:h-16 flex items-center justify-between gap-2">
         {/* Left: Hamburger (mobile) + Breadcrumbs */}
         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 min-w-0">
@@ -82,7 +82,7 @@ export default function Navbar({
           {isMobile && (
             <button
               onClick={onToggleMobileMenu}
-              className="p-2 -ml-1 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition shrink-0"
+              className="p-2 -ml-1 rounded-xl text-[#17201D] hover:text-[#557A68] hover:bg-[#F4F2EC] transition shrink-0 cursor-pointer"
               title="Open Menu"
               aria-label="Open Menu"
             >
@@ -94,13 +94,13 @@ export default function Navbar({
 
         {/* Middle: Global Search Input (desktop) */}
         <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center relative w-64 lg:w-96">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#6B7772] absolute left-3 pointer-events-none" />
           <input
             type="text"
             placeholder="Search rooms, offices, EV slots..."
             value={quickSearch}
             onChange={(e) => setQuickSearch(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+            className="w-full bg-[#F4F2EC] border border-[#DCE0DA] rounded-xl pl-9 pr-4 py-1.5 text-xs text-[#17201D] placeholder-[#6B7772] focus:outline-none focus:border-[#557A68] focus:ring-1 focus:ring-[#557A68] transition"
           />
         </form>
 
@@ -109,24 +109,24 @@ export default function Navbar({
           {/* Mobile Search Toggle */}
           <button
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition"
+            className="md:hidden p-2 rounded-xl text-[#6B7772] hover:text-[#17201D] hover:bg-[#F4F2EC] transition cursor-pointer"
             title="Search"
             aria-label="Search"
           >
-            {mobileSearchOpen ? <X className="w-4.5 h-4.5 text-slate-700" /> : <Search className="w-4.5 h-4.5" />}
+            {mobileSearchOpen ? <X className="w-4.5 h-4.5 text-[#17201D]" /> : <Search className="w-4.5 h-4.5" />}
           </button>
 
           {/* Live System Time (hidden on tiny screens) */}
-          <div className="hidden sm:flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 rounded-xl bg-slate-50 border border-slate-200 text-[11px] sm:text-xs font-mono text-cyan-600">
-            <Clock className="w-3.5 h-3.5 text-cyan-500 animate-pulse shrink-0" />
+          <div className="hidden sm:flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 rounded-xl bg-[#F4F2EC] border border-[#DCE0DA] text-[11px] sm:text-xs font-mono text-[#557A68]">
+            <Clock className="w-3.5 h-3.5 text-[#557A68] animate-pulse shrink-0" />
             <span className="hidden lg:inline">{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
             <span className="lg:hidden">{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
 
           {/* SIH Status Tag (desktop only) */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-[11px] font-medium text-cyan-600">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-500" />
-            <span>B+G+9 Revit Model</span>
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F4F2EC] border border-[#DCE0DA] text-[11px] font-medium text-[#2F4940]">
+            <Sparkles className="w-3.5 h-3.5 text-[#C69A45]" />
+            <span>B+G+9 Revit BIM Model</span>
           </div>
 
           {/* Alerts Notification Trigger */}
@@ -152,13 +152,12 @@ export default function Navbar({
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
 
-          {/* User Persona Switcher */}
+          {/* User Persona Profile */}
           <div 
-            onClick={() => onNavigate('login')}
-            className="flex items-center gap-2 pl-1.5 sm:pl-2 border-l border-slate-200 cursor-pointer hover:opacity-80 transition"
-            title="Switch User Role"
+            className="flex items-center gap-2 pl-1.5 sm:pl-2 border-l border-slate-200"
+            title={`${activePersona?.name || 'User'} (${activePersona?.role || 'Active Persona'})`}
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border border-cyan-300/40">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border border-cyan-300/40 shadow-sm">
               {activePersona?.avatar || "AP"}
             </div>
           </div>

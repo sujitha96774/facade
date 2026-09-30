@@ -9,11 +9,11 @@ export const PROJECT_METRICS = {
   totalBuiltUpAreaSqM: 28400,
   commercialAreaSqM: 5600,
   residentialAreaSqM: 18400,
-  basementParkingAreaSqM: 4200,
+  basementParkingAreaSqM: 8400,
   courtyardAreaSqM: 800,
   greenCoverageRatio: "42.5%",
-  totalEvChargingStalls: 40,
-  totalParkingSlots: 200,
+  totalEvChargingStalls: 60,
+  totalParkingSlots: 400,
   residentialUnitsCount: 72,
   commercialShopsCount: 16,
   officesCount: 8,
@@ -332,20 +332,137 @@ export const FLOOR_EXPLORER_DATA = [
   }
 ];
 
-// Generate 200 parking grid items (40 EV Fast Chargers + 160 Standard Parking)
-export const EV_PARKING_GRID = Array.from({ length: 200 }, (_, i) => {
-  const isEv = i < 40;
-  const isOccupied = (i * 7 + 3) % 10 < 6;
-  const isCharging = isEv && isOccupied && (i % 2 === 0);
+// Generate 400 parking grid items across Basement Levels B1 (200) and B2 (200)
+export const EV_PARKING_GRID = Array.from({ length: 400 }, (_, i) => {
+  const level = i < 200 ? "B1" : "B2";
+  const numOnLevel = (i % 200) + 1;
+  const slotId = `${level}-${numOnLevel.toString().padStart(3, '0')}`;
+  
+  // 60 total EV fast charging stalls (30 on B1: 001-030, 30 on B2: 001-030)
+  const isEv = (i % 200) < 30;
+  // 20 total Disabled-Accessible stalls (10 on B1: 031-040, 10 on B2: 031-040) near lift lobbies
+  const isAccessible = (i % 200) >= 30 && (i % 200) < 40;
+  
+  const hash = (i * 19 + 7) % 100;
+  
+  let status = "Available";
+  let kwDrawn = 0;
+  let batteryPct = null;
+  let timeRemainingMins = null;
+  let reservedFor = null;
+  let vehiclePlate = null;
+  let vehicleModel = null;
+  let entryTime = null;
+
+  if (isEv) {
+    if (hash < 65) {
+      status = "EV Charging";
+      kwDrawn = 65 + ((i * 17) % 85); // 65kW to 150kW
+      batteryPct = 28 + ((i * 11) % 68); // 28% to 95%
+      timeRemainingMins = Math.max(8, Math.floor((100 - batteryPct) * 0.75));
+      vehiclePlate = `DL-01-EV-${(1200 + (i * 29) % 8500)}`;
+      const evModels = [
+        "Tesla Model Y Long Range",
+        "Hyundai Ioniq 5 AWD",
+        "Kia EV6 GT-Line",
+        "BMW i4 eDrive40",
+        "Audi Q8 e-tron",
+        "Mercedes EQE SUV",
+        "Volvo EX40 Recharge",
+        "Tata Nexon EV Max"
+      ];
+      vehicleModel = evModels[i % evModels.length];
+      entryTime = `${8 + (i % 6)}:${((i * 13) % 60).toString().padStart(2, '0')} AM`;
+    } else {
+      status = "Available"; // EV stall ready for incoming EV
+    }
+  } else if (isAccessible) {
+    if (hash < 50) {
+      status = "Occupied";
+      vehiclePlate = `DL-04-AC-${(1050 + (i * 31) % 8800)}`;
+      vehicleModel = "Accessible Mobility Van / Permit #AC-884";
+      entryTime = `${8 + (i % 5)}:${((i * 19) % 60).toString().padStart(2, '0')} AM`;
+    } else if (hash < 70) {
+      status = "Reserved";
+      reservedFor = "Designated Accessible Resident (Priority Access)";
+    } else {
+      status = "Available";
+    }
+  } else if (hash < 16) {
+    status = "Reserved";
+    const reservers = [
+      "Penthouse Resident (PH-901)",
+      "Penthouse Resident (PH-904)",
+      "Executive Office Suite 02",
+      "Executive Office Suite 06",
+      "Building Operations Lead",
+      "Commercial Anchor Tenant (Supermarket)",
+      "Dr. Aris (Emergency Medical Access)",
+      "VIP Diplomatic Delegations"
+    ];
+    reservedFor = reservers[i % reservers.length];
+    if (hash < 9) {
+      vehiclePlate = `DL-03-RS-${(1100 + (i * 23) % 8800)}`;
+      vehicleModel = "Mercedes E-Class / BMW 5-Series";
+      entryTime = `${9 + (i % 4)}:${((i * 11) % 60).toString().padStart(2, '0')} AM`;
+    }
+  } else if (hash < 68) {
+    status = "Occupied";
+    vehiclePlate = `DL-02-CP-${(1020 + (i * 37) % 8900)}`;
+    const models = [
+      "Honda City Hybrid",
+      "Toyota Fortuner 4x4",
+      "Hyundai Creta SX",
+      "Skoda Octavia RS",
+      "Volkswagen Virtus GT",
+      "Kia Seltos Facelift",
+      "Tata Harrier Dark",
+      "Mahindra XUV700 AX7",
+      "Toyota Camry Hybrid"
+    ];
+    vehicleModel = models[i % models.length];
+    entryTime = `${7 + (i % 7)}:${((i * 17) % 60).toString().padStart(2, '0')} AM`;
+  } else {
+    status = "Available";
+  }
+
+  // Bay classification
+  let type = "Standard Bay";
+  if (isEv) {
+    type = ((i % 200) < 15) ? "Ultra-Fast DC (150kW)" : "Smart Fast DC (60kW)";
+  } else if (isAccessible) {
+    type = "Disabled-Accessible Bay";
+  } else if (status === "Reserved") {
+    type = "VIP Designated Bay";
+  } else if ((i % 200) % 20 === 0) {
+    type = "Compact Mobility Bay";
+  }
+
+  const zoneIndex = Math.floor((i % 200) / 50);
+  const zones = [
+    "Zone A (Commercial & Retail)",
+    "Zone B (Residential Tower)",
+    "Zone C (EV Smart Hub)",
+    "Zone D (VIP & Long Stay)"
+  ];
+  const zoneKeys = ["A", "B", "C", "D"];
+
   return {
-    slotId: `B1-${(i + 1).toString().padStart(3, '0')}`,
-    type: isEv ? "EV Fast Charger (150kW)" : "Standard Parking",
+    slotId,
+    level,
+    zone: zones[zoneIndex],
+    zoneKey: zoneKeys[zoneIndex],
+    type,
     isEv,
-    status: isCharging ? "Charging" : isOccupied ? "Occupied" : "Available",
-    batteryPct: isCharging ? Math.floor(40 + (i * 13) % 55) : null,
-    kwDrawn: isCharging ? 120 + (i % 30) : 0,
-    timeRemainingMins: isCharging ? Math.floor(15 + (i * 9) % 35) : null,
-    vehicleType: isOccupied ? (isEv ? "Tesla Model Y / Hyundai Ioniq 5" : "Sedan / SUV") : "N/A"
+    isAccessible,
+    status, // "Available" | "Occupied" | "Reserved" | "EV Charging"
+    batteryPct,
+    kwDrawn,
+    timeRemainingMins,
+    reservedFor,
+    vehiclePlate,
+    vehicleModel,
+    entryTime
   };
 });
 
